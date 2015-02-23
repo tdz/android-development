@@ -40,6 +40,7 @@ QemuPipeStream::QemuPipeStream(int sock, size_t bufSize) :
 QemuPipeStream::~QemuPipeStream()
 {
     if (m_sock >= 0) {
+        flush();
         ::close(m_sock);
     }
     if (m_buf != NULL) {
@@ -122,7 +123,7 @@ const unsigned char *QemuPipeStream::readFully(void *buf, size_t len)
     }
     size_t res = len;
     while (res > 0) {
-        ssize_t stat = ::read(m_sock, (char *)(buf) + len - res, res);
+        ssize_t stat = ::read(m_sock, (char *)(buf) + len - res, len);
         if (stat == 0) {
             // client shutdown;
             return NULL;
